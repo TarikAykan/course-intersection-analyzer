@@ -1,116 +1,128 @@
-# Ders Kesisim Analizi
+# Course Intersection Analyzer
 
-Bu masaustu uygulamasi, Excel veya API kaynakli ogrenci/ders kayitlarini analiz ederek iki secili dersi ayni anda alan ogrencileri listeler.
+A desktop application for Windows that reads student enrollment data from **Excel** (`.xlsx` / `.xls`) or from a **JSON API**, then finds students who take **both** of two courses you select.
 
-## Program ne ise yarar?
+Within students enrolled in the **first** course, it lists those who also take the **second** course.
 
-- Kullanici veri kaynagi olarak Excel veya API secer.
-- Sutunlar eslestirilir: Ogrenci No (opsiyonel), Ad, Soyad, Ders Adi.
-- Iki ders secilir (ornek: Enerji ve Afet).
-- Program bu iki dersi de alan ogrencileri bulur.
-- Sonuclar tabloda gosterilir ve istenirse Excel'e aktarilir.
+## Features
 
-## Kurulum
+- **Excel**: Pick a file and map columns interactively.
+- **API**: Enter a URL and fetch JSON records (see [API response format](#api-response-format)).
+- **Flexible columns**: Map student ID (optional), **first name**, **last name**, and course name separately—suites exports where name fields are split.
+- **Matching**: Prefer student ID; if missing or you choose “No student ID”, match by combined **First name + Last name** (case-insensitive normalization).
+- **Results**: Table with student ID, full name, and the two relevant courses; optional export to Excel.
+- **Executable**: Build a single-file `.exe` with PyInstaller (see [Building an executable](#building-an-executable)).
 
-1. Python 3.10+ kurulu olmali.
-2. Proje klasorunde terminal acin.
-3. Paketleri kurun:
+## Requirements
+
+- Python 3.10+
+- Dependencies (see `requirements.txt`): `pandas`, `openpyxl`, `customtkinter`, `requests`, `pyinstaller` (for builds)
+
+## Installation
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Uygulamayi calistirma
+## Run
 
 ```bash
 python main.py
 ```
 
-## Kullanım Adimlari
+The window title is **Ders Kesisim Analizi** (Turkish UI labels); functionality is language-independent regarding your data column names.
 
-1. **Veri Kaynagini Sec**
-   - Excel icin `Veri Kaynagi: Excel` secin ve `Excel Dosyasi Sec` butonuna basin.
-   - API icin `Veri Kaynagi: API` secin, URL girin ve `API Verisini Cek` butonuna basin.
-2. **Sutunlari Eslestir**
-   - Ogrenci No, Ad, Soyad ve Ders Adi sutunlarini secin.
-   - Eger ogrenci no yoksa `Ogrenci no yok` secenegini kullanin.
-   - `Sutunlari Onayla` butonuna basin.
-3. **Dersleri Sec**
-   - Birinci ve ikinci dersi secin.
-4. **Analiz Et**
-   - `Analiz Et` butonuna basin.
-   - Sonuclar tabloda gosterilir.
-5. **Disa Aktar**
-   - `Sonucu Excel'e Aktar` butonu ile sonucu kaydedin.
+## Usage
 
-## Excel Veri Yapisi
+1. **Choose data source**
+   - **Excel**: Set source to Excel, click **Excel Dosyasi Sec**, choose `.xlsx` or `.xls`.
+   - **API**: Set source to API, enter the URL, click **API Verisini Cek**.
+2. **Map columns**
+   - **Student number** (optional): pick the column, or **Ogrenci no yok** if you have no ID column.
+   - **First name** and **Last name**: pick the corresponding columns.
+   - **Course name**: pick the course column.
+   - Click **Sutunlari Onayla** to load unique course names.
+3. **Select courses**
+   - Choose **first** and **second** course from the dropdowns (must be different).
+4. **Analyze**
+   - Click **Analiz Et**. Results appear in the table and a short summary line above it.
+5. **Export** (optional)
+   - Click **Sonucu Excel'e Aktar** to save the filtered list.
 
-Program farkli OBS ciktilariyla calisabilsin diye sutunlari kullanici secer.
-Beklenen alanlar:
-- `Ogrenci No` (opsiyonel)
-- `Ad`
-- `Soyad`
-- `Ders Adi`
+## Expected data shape
 
-## Ozel Notlar
+Each row should represent one enrollment line: one student, one course (same student may appear on multiple rows).
 
-- Eslestirme onceligi **Ogrenci No** uzerindedir.
-- Ogrenci No yoksa **Ad + Soyad** birlestirilerek eslestirme yapilir.
-- Analiz yalnizca secilen **iki dersin kesisimini** hesaplar.
-- Kod yapisi ileride ucuncu ders filtresi eklenebilecek sekilde modulerdir.
+Example columns (your headers can differ; you map them in the UI):
 
-## EXE Olusturma (PyInstaller)
+- Student ID — optional  
+- First name  
+- Last name  
+- Course name  
 
-Windows'ta proje klasorunde su dosyayi calistirin:
+## API response format
+
+The app expects valid JSON in one of these forms:
+
+- A **JSON array** of objects (each object is one row), e.g. `[{ "StudentNo": "1001", "First": "Ali", ... }, ...]`
+- An object with a **`data`** key holding that array: `{ "data": [ ... ] }`
+
+Empty payloads or non-tabular JSON will show a clear error in the UI.
+
+## Sample data
+
+| File | Purpose |
+|------|---------|
+| `sample_data/ornek_veri.csv` | Sample rows with separate first/last name columns |
+| `sample_data/ornek_api_data.json` | Same idea as JSON for API testing |
+| `sample_data/create_sample_excel.py` | Converts the CSV to `sample_data/ornek_veri.xlsx` |
+
+```bash
+python sample_data/create_sample_excel.py
+```
+
+For a quick API test, serve `ornek_api_data.json` with any static file server and paste that URL into the app.
+
+## Building an executable
+
+On Windows, from the project root:
 
 ```bat
 build_exe.bat
 ```
 
-Bu script su komutu kullanir:
+Equivalent PyInstaller command:
 
 ```bash
 pyinstaller --onefile --windowed --name DersKesisimAnalizi main.py
 ```
 
-Eger `assets/app_icon.ico` varsa otomatik olarak ikon parametresi ile build alir.
+If `assets/app_icon.ico` exists, `build_exe.bat` adds `--icon=assets/app_icon.ico`.
 
-## Proje Yapisi
+## Project layout
 
 ```text
-student_course_checker/
-│
 ├── main.py
 ├── requirements.txt
 ├── README.md
 ├── build_exe.bat
-│
 ├── app/
-│   ├── __init__.py
 │   ├── gui.py
 │   ├── excel_reader.py
 │   ├── analyzer.py
 │   └── exporter.py
-│
 ├── assets/
 │   └── app_icon.ico
-│
 └── sample_data/
     ├── ornek_veri.csv
     ├── ornek_api_data.json
     └── create_sample_excel.py
 ```
 
-## Ornek Test Verisi
+## Credits
 
-- `sample_data/ornek_veri.csv`: Hazir ornek veri.
-- `sample_data/ornek_api_data.json`: API simulasyonu icin JSON veri.
-- `sample_data/create_sample_excel.py`: Bu veriyi `.xlsx` formatina donusturmek icin script.
+Prepared by **Tarık Aykan** · [betanova.tech](https://betanova.tech)
 
-Script calistirma:
+## License
 
-```bash
-python sample_data/create_sample_excel.py
-```
-
-Olusan dosya: `sample_data/ornek_veri.xlsx`
+If your GitHub repository includes a `LICENSE` file (e.g. MIT), that file applies to this project.
