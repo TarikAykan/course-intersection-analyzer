@@ -1,0 +1,8 @@
+[
+  {"Ogrenci No": "1001", "Ad": "Ali", "Soyad": "Yilmaz", "Ders Adi": "Enerji"},
+  {"Ogrenci No": "1001", "Ad": "Ali", "Soyad": "Yilmaz", "Ders Adi": "Afet"},
+  {"Ogrenci No": "1002", "Ad": "Ayse", "Soyad": "Demir", "Ders Adi": "Enerji"},
+  {"Ogrenci No": "1003", "Ad": "Mehmet", "Soyad": "Kaya", "Ders Adi": "Tarim"},
+  {"Ogrenci No": "1004", "Ad": "Zeynep", "Soyad": "Ak", "Ders Adi": "Enerji"},
+  {"Ogrenci No": "1004", "Ad": "Zeynep", "Soyad": "Ak", "Ders Adi": "Afet"}
+]
