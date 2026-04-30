@@ -105,6 +105,7 @@ If `assets/app_icon.ico` exists, `build_exe.bat` adds `--icon=assets/app_icon.ic
 ├── main.py
 ├── requirements.txt
 ├── README.md
+├── LICENSE
 ├── build_exe.bat
 ├── app/
 │   ├── gui.py
@@ -125,4 +126,4 @@ Prepared by **Tarık Aykan** · [betanova.tech](https://betanova.tech)
 
 ## License
 
-If your GitHub repository includes a `LICENSE` file (e.g. MIT), that file applies to this project.
+This repository includes an MIT `LICENSE` file.
